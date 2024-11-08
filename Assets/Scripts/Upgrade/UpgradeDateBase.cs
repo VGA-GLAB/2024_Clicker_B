@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "UpgradeData", menuName = "ScriptableObjects/CreateUpgradeDB")]
@@ -9,9 +9,9 @@ public class UpgradeDateBase : ScriptableObject
     public List<UpgradeContext> _grandma;
 
     /// <summary>
-    /// ƒŠƒXƒg‚ğæ“¾‚µ‚Ü‚·
+    /// ãƒªã‚¹ãƒˆã‚’å–å¾—ã—ã¾ã™
     /// </summary>
-    /// <param name="id">ƒŠƒXƒg‚Ì”Ô†</param>
+    /// <param name="id">ãƒªã‚¹ãƒˆã®ç•ªå·</param>
     public List<UpgradeContext> GetList(int id)
     {
         List<UpgradeContext> list = id switch

@@ -1,18 +1,19 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
-/// ƒAƒbƒvƒOƒŒ[ƒh‚ÌŠî”Õ‚ÌƒNƒ‰ƒX‚Å‚·
+/// ã‚¢ãƒƒãƒ—ã‚°ãƒ¬ãƒ¼ãƒ‰ã®åŸºç›¤ã®ã‚¯ãƒ©ã‚¹ã§ã™
 /// </summary>
 public class UpgradeBase : MonoBehaviour
 {
-    [SerializeField, Header("‰¿Ši")] private Text _costText;
-    [SerializeField, Header("ƒAƒbƒvƒOƒŒ[ƒh‚ÌƒAƒCƒRƒ“")] private Image _icon;
+    [SerializeField, Header("ä¾¡æ ¼")] private TMP_Text _costText;
+    [SerializeField, Header("ã‚¢ãƒƒãƒ—ã‚°ãƒ¬ãƒ¼ãƒ‰ã®ã‚¢ã‚¤ã‚³ãƒ³")] private Image _icon;
     [SerializeField] private UpgradeDateBase _upgradeDB;
     private CookieDate _cookieDate;
-    public int _cost;
-    public float _value; //‘‰Á”{—¦
+    private int _cost;
+    private float _mag; //å¢—åŠ å€ç‡
     private UpgradeEnum _upgrade;
 
     public int Cost
@@ -27,10 +28,10 @@ public class UpgradeBase : MonoBehaviour
         button.onClick.AddListener(Upgrade);
     }
 
-    ///////////////¶¬‚Ì‹@”\///////////////
+    ///////////////ç”Ÿæˆæ™‚ã®æ©Ÿèƒ½///////////////
 
     /// <summary>
-    /// ƒ{ƒ^ƒ“‚ÌŒ©‚½–Ú‚ğ®‚¦‚Ü‚·
+    /// ãƒœã‚¿ãƒ³ã®è¦‹ãŸç›®ã‚’æ•´ãˆã¾ã™
     /// </summary>
     public void IconChange(int id, int index)
     {
@@ -38,7 +39,7 @@ public class UpgradeBase : MonoBehaviour
         _icon.sprite = list[index].Icon;
         _costText.text = list[index].Cost.ToString();
         _cost = list[index].Cost;
-        _value = list[index].Value;
+        _mag = list[index].Mag;
         _upgrade = id switch
         {
             0 => UpgradeEnum.Cookie,
@@ -49,22 +50,21 @@ public class UpgradeBase : MonoBehaviour
     }
 
 
-    ///////////////ƒ{ƒ^ƒ“‚Ì‹@”\///////////////
+    ///////////////ãƒœã‚¿ãƒ³ã®æ©Ÿèƒ½///////////////
     /// <summary>
-    /// ”{—¦‚ğ•ÏX‚·‚é‹@”\
+    /// å€ç‡ã‚’å¤‰æ›´ã™ã‚‹æ©Ÿèƒ½
     /// </summary>
     public void Upgrade()
     {
-        float value = _upgrade switch
+        switch (_upgrade)
         {
-            UpgradeEnum.Cookie => _cookieDate.IncreaseCookie,
-            //UpgradeEnum.Cursor => ƒJ[ƒ\ƒ‹‚ª‚P•b‚²‚Æ‚É“üè‚Å‚«‚éƒNƒbƒL[–‡”‚Ì•Ï”
-            //UpgradeEnum.Grandma => ƒOƒ‰ƒ“ƒ}‚ª‚P•b‚²‚Æ‚É“üè‚Å‚«‚éƒNƒbƒL[–‡”‚Ì•Ï” 
-            _ => 0
-        };
-
-        Debug.Log(value);
-        value += value * (1f + _value);
-        Debug.Log(_cookieDate.IncreaseCookie);
+            case UpgradeEnum.Cookie:
+                _cookieDate.IncreaseCookie += _cookieDate.IncreaseCookie * (1f + _mag);
+                break;
+            case UpgradeEnum.Cursor:
+                break;
+            case UpgradeEnum.Grandma:
+                break;
+        }
     }
 }

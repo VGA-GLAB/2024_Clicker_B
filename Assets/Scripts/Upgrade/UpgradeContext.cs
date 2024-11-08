@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using UnityEngine;
 
 [Serializable]
@@ -7,6 +7,6 @@ public struct UpgradeContext
 {
     public string Name;
     public Sprite Icon;
-    [Header("”Ì”„‰¿Ši")] public int Cost;
-    [Header("‘‰Á‚³‚¹‚é”{—¦")] public float Value;
+    [Header("è²©å£²ä¾¡æ ¼")] public int Cost;
+    [Header("å¢—åŠ ã•ã›ã‚‹å€ç‡")] public float Mag;
 }

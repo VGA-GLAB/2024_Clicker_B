@@ -1,9 +1,9 @@
-/// <summary>
-/// ƒAƒbƒvƒOƒŒ[ƒh‚Ìí—Ş‚Ì—ñ‹“Œ^‚Å‚·
+ï»¿/// <summary>
+/// ã‚¢ãƒƒãƒ—ã‚°ãƒ¬ãƒ¼ãƒ‰ã®ç¨®é¡ã®åˆ—æŒ™å‹ã§ã™
 /// </summary>
 public enum UpgradeEnum
 {
-    Cookie, //ƒNƒbƒL[
-    Cursor, //ƒJ[ƒ\ƒ‹
-    Grandma, //ƒOƒ‰ƒ“ƒ}
+    Cookie, //ã‚¯ãƒƒã‚­ãƒ¼
+    Cursor, //ã‚«ãƒ¼ã‚½ãƒ«
+    Grandma, //ã‚°ãƒ©ãƒ³ãƒ
 }

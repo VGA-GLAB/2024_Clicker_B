@@ -29,10 +29,8 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// アップグレードのアイコンをショップに表示する
     /// </summary>
-    public void UpgradeUIInst()
+    public void UpgradeUIInst(int id, int index)
     {
-        int id = 0;
-        int index = 1;
         Instantiate(_upgradeButton, _canvas); //アイコンを生成する
         UpgradeBase upgradeBase = _upgradeButton.GetComponent<UpgradeBase>();
         upgradeBase.IconChange(id, index);

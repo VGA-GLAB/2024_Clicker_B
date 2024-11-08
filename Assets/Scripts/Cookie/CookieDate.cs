@@ -18,14 +18,4 @@ public class CookieDate
         get { return _increaseCookie; }
         set { _increaseCookie = value; }
     }
-
-    /// <summary>
-    /// 1クリックで入手できるクッキーの枚数を増やす
-    /// </summary>
-    /// <param name="mag">増加倍率</param>
-    public void Increase(float mag)
-    {
-        _increaseCookie += _increaseCookie * mag;
-        Debug.Log(_increaseCookie);
-    }
 }
