@@ -2,9 +2,8 @@
 
 public class GameManager : MonoBehaviour
 {
-
-    [SerializeField] private GameObject _upgradeButton;
-    [SerializeField] private Transform _canvas;
+    private UpgradeInstantiate _upgradeInst;
+    
 
     /// <summary>クッキーの所持枚数</summary>
     public double Cookies {  get; set; }
@@ -14,15 +13,11 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-
     }
 
     private void Update()
     {
         // ToDo : 施設のCookie増加の処理を書く
-        // ToDo : アップグレードのアイコンを表示する条件を書く
-
-
     }
 
     /// <summary>
@@ -33,13 +28,5 @@ public class GameManager : MonoBehaviour
         Cookies += IncreaseCookie;
     }
 
-    /// <summary>
-    /// アップグレードのアイコンをショップに表示する
-    /// </summary>
-    public void UpgradeUIInst(int id, int index)
-    {
-        GameObject upgradeIcon = Instantiate(_upgradeButton, _canvas); //アイコンを生成する
-        UpgradeBase upgradeBase = upgradeIcon.GetComponent<UpgradeBase>();
-        upgradeBase.IconChange(id, index);
-    }
+    
 }
