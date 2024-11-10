@@ -28,7 +28,7 @@ public class ResourcesCounterUI : MonoBehaviour
             _gameManager.CookieClicked();
         _gameManager.IncreaseCookie = value;*/
     }
-    public void UpdateTest()
+    public void UpdateText()
     {
         var value = (BigInteger)_gameManager.Cookies;
         _text.text = $"{value.ToString("#,0")}{_unitName}";

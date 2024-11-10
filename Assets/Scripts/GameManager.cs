@@ -35,6 +35,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("Clicked");
         var addCookie = Mathf.Ceil(IncreaseCookie * 0.1f);
         Cookies += addCookie;
-        ResourcesCounterUI.instance.UpdateTest();
+        ResourcesCounterUI.instance.UpdateText();
     }
 }
