@@ -1,35 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ResourcesCounterUI : MonoBehaviour
 {
-    private GameManager gameManager;
+    private GameManager _gameManager;
     private Text _text;
-    [SerializeField] private string _unitName;
+    [SerializeField] private string unitName;
 
-    [SerializeField] long Add;
-    void Start()
+    [SerializeField] private long add;
+    private void Start()
     {
-        gameManager = FindAnyObjectByType<GameManager>();
+        _gameManager = FindAnyObjectByType<GameManager>();
         _text = GetComponent<Text>();
-        //v.Cookies
     }
     [ContextMenu("Click")]
-    void Click()
+    private void Click()
     {
-        var value = gameManager.IncreaseCookie;
+        var value = _gameManager.IncreaseCookie;
         value = value <= 0 ? 1 : value;
-        gameManager.IncreaseCookie = Add;
-            gameManager.CookieClicked();
-        gameManager.IncreaseCookie = value;
+        _gameManager.IncreaseCookie = add;
+            _gameManager.CookieClicked();
+        _gameManager.IncreaseCookie = value;
     }
-    void Update()
+    private void Update()
     {
-        var value = (BigInteger)gameManager.Cookies;
-        _text.text = $"{value.ToString("#,0")}{_unitName}";
+        var value = (BigInteger)_gameManager.Cookies;
+        _text.text = $"{value.ToString("#,0")}{unitName}";
     }
 }
