@@ -8,7 +8,7 @@ using TMPro;
 /// </summary>
 public class UpgradeBase : MonoBehaviour
 {
-    [SerializeField, Header("価格")] private TMP_Text _costText;
+    [SerializeField, Header("価格")] private Text _costText;
     [SerializeField, Header("アップグレードのアイコン")] private Image _icon;
     [SerializeField] private UpgradeDateBase _upgradeDB;
     private int _cost;
