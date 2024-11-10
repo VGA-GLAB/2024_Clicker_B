@@ -30,7 +30,7 @@ public class ResourcesCounterUI : MonoBehaviour
     }
     public void UpdateText()
     {
-        var value = (BigInteger)_gameManager.Cookies;
+        var value = _gameManager.Cookies;
         _text.text = $"{value.ToString("#,0")}{_unitName}";
     }
 }
