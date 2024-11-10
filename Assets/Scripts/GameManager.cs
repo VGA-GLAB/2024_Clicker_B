@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class GameManager : MonoBehaviour
     
     private void Start()
     {
+        Cookies = 0;
+        IncreaseCookie = 1;
+        Cps = 0;
     }
 
     private void Update()
@@ -31,6 +35,4 @@ public class GameManager : MonoBehaviour
         var addCookie = Math.Ceiling(IncreaseCookie * 0.0001f);
         Cookies += addCookie;
     }
-
-    
 }
