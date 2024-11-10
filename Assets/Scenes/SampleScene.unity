@@ -589,8 +589,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5084259c96843d0418a8baf7c7fbd1fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _upgradeButton: {fileID: 0}
-  _canvas: {fileID: 0}
 --- !u!1 &1274578276
 GameObject:
   m_ObjectHideFlags: 0
@@ -703,6 +701,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1366421209}
   - component: {fileID: 1366421208}
+  - component: {fileID: 1366421210}
   m_Layer: 0
   m_Name: System
   m_TagString: Untagged
@@ -722,9 +721,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5084259c96843d0418a8baf7c7fbd1fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _upgradeButton: {fileID: 1842698309082799828, guid: 0ebd0ccee034c724f8774ae318ec13fa,
-    type: 3}
-  _canvas: {fileID: 1274578281}
 --- !u!4 &1366421209
 Transform:
   m_ObjectHideFlags: 0
@@ -740,6 +736,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1366421210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366421207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26f14d86805b1c54281c64a4a61420d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _upgradeButton: {fileID: 1842698309082799828, guid: 0ebd0ccee034c724f8774ae318ec13fa,
+    type: 3}
+  _canvas: {fileID: 1274578281}
+  HaveCursor: 0
 --- !u!1 &1653615478
 GameObject:
   m_ObjectHideFlags: 0
