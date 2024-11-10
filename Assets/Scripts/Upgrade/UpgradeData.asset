@@ -16,38 +16,38 @@ MonoBehaviour:
   - Name: "\u30EC\u30D9\u30EB1"
     Icon: {fileID: 21300000, guid: f6f8ead0a76128549ad4a4911099fad9, type: 3}
     Cost: 50
-    Value: 0.3
+    Mag: 0.3
   - Name: "\u30EC\u30D9\u30EB2"
     Icon: {fileID: 21300000, guid: f6f8ead0a76128549ad4a4911099fad9, type: 3}
     Cost: 100
-    Value: 0.3
-  - Name: 
-    Icon: {fileID: 0}
-    Cost: 0
-    Value: 0
+    Mag: 0.3
+  - Name: "\u30EC\u30D9\u30EB3"
+    Icon: {fileID: 21300000, guid: f6f8ead0a76128549ad4a4911099fad9, type: 3}
+    Cost: 200
+    Mag: 0.3
   _cursor:
   - Name: 
     Icon: {fileID: 0}
     Cost: 0
-    Value: 0
+    Mag: 0
   - Name: 
     Icon: {fileID: 0}
     Cost: 0
-    Value: 0
+    Mag: 0
   - Name: 
     Icon: {fileID: 0}
     Cost: 0
-    Value: 0
+    Mag: 0
   _grandma:
   - Name: 
     Icon: {fileID: 0}
     Cost: 0
-    Value: 0
+    Mag: 0
   - Name: 
     Icon: {fileID: 0}
     Cost: 0
-    Value: 0
+    Mag: 0
   - Name: 
     Icon: {fileID: 0}
     Cost: 0
-    Value: 0
+    Mag: 0

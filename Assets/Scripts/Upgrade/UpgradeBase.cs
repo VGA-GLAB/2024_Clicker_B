@@ -11,10 +11,10 @@ public class UpgradeBase : MonoBehaviour
     [SerializeField, Header("価格")] private TMP_Text _costText;
     [SerializeField, Header("アップグレードのアイコン")] private Image _icon;
     [SerializeField] private UpgradeDateBase _upgradeDB;
-    private CookieDate _cookieDate;
     private int _cost;
     private float _mag; //増加倍率
     private UpgradeEnum _upgrade;
+    private GameManager _gameManager;
 
     public int Cost
     {
@@ -23,7 +23,7 @@ public class UpgradeBase : MonoBehaviour
 
     private void Start()
     {
-        _cookieDate = new CookieDate();
+        _gameManager = FindFirstObjectByType<GameManager>().GetComponent<GameManager>();
         Button button = GetComponent<Button>();
         button.onClick.AddListener(Upgrade);
     }
@@ -59,7 +59,7 @@ public class UpgradeBase : MonoBehaviour
         switch (_upgrade)
         {
             case UpgradeEnum.Cookie:
-                _cookieDate.IncreaseCookie += _cookieDate.IncreaseCookie * (1f + _mag);
+                _gameManager.IncreaseCookie += _gameManager.IncreaseCookie * (1f + _mag);
                 break;
             case UpgradeEnum.Cursor:
                 break;
