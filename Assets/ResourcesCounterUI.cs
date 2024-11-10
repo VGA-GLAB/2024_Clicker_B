@@ -18,6 +18,7 @@ public class ResourcesCounterUI : MonoBehaviour
         instance = this;
         _gameManager = FindAnyObjectByType<GameManager>();
         _text = GetComponent<Text>();
+        UpdateText();
     }
     [ContextMenu("Click")]
     private void Click()
