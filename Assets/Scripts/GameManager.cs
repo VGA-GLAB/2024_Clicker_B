@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public double Cookies {  get; set; }
 
     /// <summary>1クリックで入手できるクッキーの枚数</summary>
-    public float IncreaseCookie { get; set; }
+    [field: SerializeField] public float IncreaseCookie { get; set; }
 
     /// <summary>1秒間に入手できるクッキーの枚数</summary>
     public float Cps { get; set; }
@@ -32,7 +32,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void CookieClicked()
     {
-        var addCookie = Math.Ceiling(IncreaseCookie * 0.0001f);
+        Debug.Log("Clicked");
+        var addCookie = Mathf.Ceil(IncreaseCookie * 0.1f);
         Cookies += addCookie;
+        ResourcesCounterUI.instance.UpdateTest();
     }
 }
