@@ -15,6 +15,7 @@ public class ResourcesCounterUI : MonoBehaviour
     {
         gameManager = FindAnyObjectByType<GameManager>();
         _text = GetComponent<Text>();
+        //v.Cookies
     }
     [ContextMenu("Click")]
     void Click()
@@ -22,13 +23,11 @@ public class ResourcesCounterUI : MonoBehaviour
         for (int i = 0; i < Add; i++)
         {
             gameManager.CookieClicked();
-
         }
     }
     void Update()
     {
-        FieldInfo info = typeof(GameManager).GetField("_cookieDate", BindingFlags.NonPublic | BindingFlags.Instance);
-        var v = (CookieDate)info.GetValue(gameManager);
-        _text.text = $"{v.Cookies.ToString("#,0")}{_unitName}";
+        long v = (long)gameManager.Cookies;
+        _text.text = $"{v.ToString("#,0")}{_unitName}";
     }
 }
