@@ -1,4 +1,4 @@
-// FacilityBase.cs
+ï»¿// FacilityBase.cs
 public class FacilityBase
 {
     private int _facilityLevel = 1;
@@ -14,15 +14,15 @@ public class FacilityBase
         _cost = initialCost;
     }
 
-    // Ž{Ý‚ÌƒAƒbƒvƒOƒŒ[ƒh
+    // æ–½è¨­ã®ã‚¢ãƒƒãƒ—ã‚°ãƒ¬ãƒ¼ãƒ‰
     public void Upgrade()
     {
         _facilityLevel++;
         _increaseAmount += 2;
-        _cost += _facilityLevel * 10;  // ƒRƒXƒg‚ð‘‰Á
+        _cost += _facilityLevel * 10;  // ã‚³ã‚¹ãƒˆã‚’å¢—åŠ 
     }
 
-    // Ž©“®ƒNƒŠƒbƒN‚ª‰Â”\‚©‚ð”»’è
+    // è‡ªå‹•ã‚¯ãƒªãƒƒã‚¯ãŒå¯èƒ½ã‹ã‚’åˆ¤å®š
     public bool CanAutoClick(float deltaTime)
     {
         _timeElapsed += deltaTime;
@@ -34,9 +34,9 @@ public class FacilityBase
         return false;
     }
 
-    // Ž{Ý‚Ì‘‰Á—ÊŽæ“¾
+    // æ–½è¨­ã®å¢—åŠ é‡å–å¾—
     public int GetIncreaseAmount() => _increaseAmount * _facilityLevel;
 
-    // Ž{Ý‚ÌƒRƒXƒg
+    // æ–½è¨­ã®ã‚³ã‚¹ãƒˆ
     public int Cost => _cost;
 }

@@ -1,9 +1,9 @@
-// Purchase.cs
+ï»¿// Purchase.cs
 using UnityEngine;
 
 public class Purchase
 {
-    private GameManager _gameManager;  // GameManager ƒCƒ“ƒXƒ^ƒ“ƒX
+    private GameManager _gameManager;  // GameManager ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
     private FacilityBase _facility;
 
     public Purchase(GameManager gameManager, FacilityBase facility)
@@ -13,27 +13,27 @@ public class Purchase
     }
 
     /// <summary>
-    /// {İ‚ğw“ü‚·‚é
+    /// æ–½è¨­ã‚’è³¼å…¥ã™ã‚‹
     /// </summary>
     public bool TryPurchaseFacility()
     {
         if (_gameManager.Cookies >= _facility.Cost) 
         {
-            _gameManager.Cookies -= _facility.Cost;  // ƒNƒbƒL[‚ğŒ¸‚ç‚·
-            _facility.Upgrade();  // {İ‚ğƒAƒbƒvƒOƒŒ[ƒh
+            _gameManager.Cookies -= _facility.Cost;  // ã‚¯ãƒƒã‚­ãƒ¼ã‚’æ¸›ã‚‰ã™
+            _facility.Upgrade();  // æ–½è¨­ã‚’ã‚¢ãƒƒãƒ—ã‚°ãƒ¬ãƒ¼ãƒ‰
             return true;
         }
         return false;
     }
 
     /// <summary>
-    /// ƒAƒbƒvƒOƒŒ[ƒh‚ğw“ü‚·‚é
+    /// ã‚¢ãƒƒãƒ—ã‚°ãƒ¬ãƒ¼ãƒ‰ã‚’è³¼å…¥ã™ã‚‹
     /// </summary>
     public bool TryPurchaseUpgrade(int cost)
     {
         if (_gameManager.Cookies >= cost) 
         {
-            _gameManager.Cookies -= cost;  // ƒNƒbƒL[‚ğŒ¸‚ç‚·
+            _gameManager.Cookies -= cost;  // ã‚¯ãƒƒã‚­ãƒ¼ã‚’æ¸›ã‚‰ã™
             return true;
         }
         return false;
