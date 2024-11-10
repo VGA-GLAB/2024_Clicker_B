@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     private UpgradeInstantiate _upgradeInst;
-    
 
     /// <summary>クッキーの所持枚数</summary>
     public double Cookies {  get; set; }
@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
     /// <summary>1クリックで入手できるクッキーの枚数</summary>
     public float IncreaseCookie { get; set; }
 
+    /// <summary>1秒間に入手できるクッキーの枚数</summary>
+    public float Cps { get; set; }
+    
     private void Start()
     {
     }
@@ -25,7 +28,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void CookieClicked()
     {
-        Cookies += IncreaseCookie;
+        var addCookie = Math.Ceiling(IncreaseCookie * 0.0001f);
+        Cookies += addCookie;
     }
 
     
