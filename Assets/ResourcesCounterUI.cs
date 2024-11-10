@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +11,7 @@ public class ResourcesCounterUI : MonoBehaviour
     private Text _text;
     [SerializeField] private string _unitName;
 
-    [SerializeField] int Add;
+    [SerializeField] long Add;
     void Start()
     {
         gameManager = FindAnyObjectByType<GameManager>();
@@ -20,14 +21,15 @@ public class ResourcesCounterUI : MonoBehaviour
     [ContextMenu("Click")]
     void Click()
     {
-        for (int i = 0; i < Add; i++)
-        {
+        var value = gameManager.IncreaseCookie;
+        value = value <= 0 ? 1 : value;
+        gameManager.IncreaseCookie = Add;
             gameManager.CookieClicked();
-        }
+        gameManager.IncreaseCookie = value;
     }
     void Update()
     {
-        long v = (long)gameManager.Cookies;
-        _text.text = $"{v.ToString("#,0")}{_unitName}";
+        var value = (BigInteger)gameManager.Cookies;
+        _text.text = $"{value.ToString("#,0")}{_unitName}";
     }
 }
