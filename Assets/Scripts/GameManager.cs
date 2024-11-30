@@ -15,6 +15,9 @@ public class GameManager : MonoBehaviour
     /// <summary>1秒間に入手できるクッキーの枚数</summary>
     public float Cps { get; set; }
     
+    /// <summary>村の名前</summary>
+    public string VillageName { get; set; }
+    
     private void Start()
     {
         Cookies = 0;
