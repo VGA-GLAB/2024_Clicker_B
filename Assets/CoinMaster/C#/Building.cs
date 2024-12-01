@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,16 +18,20 @@ public class Building : MonoBehaviour
     
     [Range(0,3)]
     public int level;
-    void Start()
+    void Awake()
     {
-        if(Manager == null)
-            Debug.LogError("CoinManager is null");
         
         button = GetComponent<NewButton>();
         text = GetComponentInChildren<Text>();
         
         text.raycastTarget = false;
         
+    }
+
+    private void Start()
+    {
+        if (Manager == null)
+            Debug.LogError("CoinManager is null");
         button.OnEnter.AddListener(TextUpdate);
         button.OnClick.AddListener(Buy);
         TextUpdate();

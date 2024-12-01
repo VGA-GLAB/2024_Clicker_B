@@ -48,6 +48,10 @@ public class CoinManager : MonoBehaviour
         _buildings[2].level = faci.c;
         _buildings[3].level = faci.d;
         _buildings[4].level = faci.e;
+        foreach (var building in _buildings)
+        {
+            building.TextUpdate();
+        }
         
         coin = new Coin(SaveMachine.Instance.saveData.Resource);
     }
