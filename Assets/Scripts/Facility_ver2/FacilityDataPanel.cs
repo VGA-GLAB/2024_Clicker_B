@@ -10,6 +10,7 @@ public class FacilityDataPanel : MonoBehaviour
     [SerializeField, Header("施設の情報を確認するパネル")] private GameObject _dataPanel;
     [SerializeField] private Text _level, _resourecePerSecond, _totlaResourece, _cost;
     [SerializeField] private Vector3[] _panelPos;
+    [SerializeField] private CoinManager _coinManager;
     private int _facilityNum;
     private bool[] _openFlg = new bool[5];
     
@@ -59,7 +60,14 @@ public class FacilityDataPanel : MonoBehaviour
 
     public void Upgrade()
     {
-        _facilityManager.LevelUp(_facilityNum);
-        DataUpdate();
+        if (_coinManager.coin >= _facilityManager._facilityUpgradeContext.Upgrade(_facilityManager._facilities[_facilityNum].Level - 1).LevelUpCost)
+        {
+            _facilityManager.LevelUp(_facilityNum);
+            DataUpdate();
+        }
+        else
+        {
+            Debug.Log("リソースが足りません");
+        }
     }
 }
