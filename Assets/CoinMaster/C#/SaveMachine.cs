@@ -25,6 +25,7 @@ public class SaveMachine : MonoBehaviour
     {
         Instance = this;
         saveData = LoadLocal();
+        Login();
     }
 
     void Start()
@@ -70,7 +71,9 @@ public class SaveMachine : MonoBehaviour
     [ContextMenu("OnlineSave")]
     void SaveOnline()
     {
-        CoinMasterNetwork.UpdateCoin(0);
+        Debug.Log($"before:{CoinManager.Instance.coin}\nafter: {CoinManager.Instance.coin.ToLong()}");
+        
+        CoinMasterNetwork.UpdateCoin(CoinManager.Instance.coin.ToLong());
         CoinMasterNetwork.UpdateName("0");
         CoinMasterNetwork.UpdateFacility(0);
         CoinMasterNetwork.Save();
