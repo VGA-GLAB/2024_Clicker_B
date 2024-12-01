@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class FacilityManager : MonoBehaviour
 {
-    [SerializeField] private FacilityUpgradeContext _facilityUpgradeContext;
+    public FacilityUpgradeContext _facilityUpgradeContext;
     public List<FacilityData> _facilities;
     
     private void Start()
