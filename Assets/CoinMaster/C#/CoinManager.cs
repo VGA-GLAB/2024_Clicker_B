@@ -18,6 +18,8 @@ public class CoinManager : MonoBehaviour
     
     public Coin coin { get; private set; }
 
+    public Coin totalTakeCoin;
+
     public int[] buildingsLv()
         => _buildings.Select(x => x.level).ToArray();
 
@@ -54,6 +56,7 @@ public class CoinManager : MonoBehaviour
         }
         
         coin = new Coin(SaveMachine.Instance.saveData.Resource);
+        totalTakeCoin = new Coin(SaveMachine.Instance.saveData.Resource);
     }
 
     private void Update()
@@ -63,6 +66,7 @@ public class CoinManager : MonoBehaviour
             add += _buildings[i].CoinPerSec[_buildings[i].level];
 
         coin += add * Time.deltaTime;
+        totalTakeCoin += add * Time.deltaTime;
         ChangeCoinText();
     }
 
@@ -75,6 +79,7 @@ public class CoinManager : MonoBehaviour
         if(times == 10)
             _atkPanel.SetActive(true);
         coin *= times;
+        totalTakeCoin *= times;
     }
 
     private void CloseAtkPanel()
@@ -93,6 +98,7 @@ public class CoinManager : MonoBehaviour
     private void AddCoin()
     {
         coin++;
+        totalTakeCoin++;
     }
     private void ChangeCoinText()
     {

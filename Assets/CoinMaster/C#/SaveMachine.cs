@@ -54,6 +54,7 @@ public class SaveMachine : MonoBehaviour
     void SaveLocal()
     {
         saveData.Resource = new(CoinManager.Instance.coin);
+        saveData.TotalTake = new(CoinManager.Instance.totalTakeCoin);
         
         var faci = CoinManager.Instance.buildingsLv();
         saveData.Facility = Encode(faci[0], faci[1], faci[2], faci[3], faci[4]);
@@ -106,6 +107,7 @@ public class SaveData
 {
     public string Name = "User:";
     public Coin Resource = new(0);
+    public Coin TotalTake = new(0);
     public int Facility = 0;
 
     [System.Serializable]
