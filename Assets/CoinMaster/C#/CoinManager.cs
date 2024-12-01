@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class CoinManager : MonoBehaviour
 {
+    public static CoinManager Instance;
     [SerializeField] private NewButton _coinButton;
     [SerializeField] private NewButton _slotButton;
     [SerializeField] private NewButton _atkButton;
@@ -14,10 +15,11 @@ public class CoinManager : MonoBehaviour
 
     [SerializeField] private GameObject _atkPanel;
     
-    private Coin coin;
+    public Coin coin { get; private set; }
 
     private void Awake()
     {
+        Instance = this;
         for (int i = 0; i < _buildings.Length; i++)
         {
             _buildings[i].Manager = this;
@@ -26,6 +28,7 @@ public class CoinManager : MonoBehaviour
 
     private void Start()
     {
+        
         _coinButton.OnClick.AddListener(AddCoin);
         _coinButton.OnClick.AddListener(ChangeCoinText);
         
@@ -34,8 +37,8 @@ public class CoinManager : MonoBehaviour
         _slotButton.OnClick.AddListener(Slot);
         
         _atkPanel.SetActive(false);
-        
-        coin = new Coin(0);
+
+        coin = new Coin(SaveMachine.Instance.saveData.Resource);
     }
 
     private void Update()
