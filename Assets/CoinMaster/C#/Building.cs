@@ -44,7 +44,7 @@ public class Building : MonoBehaviour
         }
     }
 
-    private void TextUpdate()
+    public void TextUpdate()
     {
         if (level >= 3)
             text.text = $"{name} Max ";

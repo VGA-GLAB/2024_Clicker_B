@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -16,6 +17,9 @@ public class CoinManager : MonoBehaviour
     [SerializeField] private GameObject _atkPanel;
     
     public Coin coin { get; private set; }
+
+    public int[] buildingsLv()
+        => _buildings.Select(x => x.level).ToArray();
 
     private void Awake()
     {
@@ -38,6 +42,13 @@ public class CoinManager : MonoBehaviour
         
         _atkPanel.SetActive(false);
 
+        var faci = SaveMachine.Decode(SaveMachine.Instance.saveData.Facility);
+        _buildings[0].level = faci.a;
+        _buildings[1].level = faci.b;
+        _buildings[2].level = faci.c;
+        _buildings[3].level = faci.d;
+        _buildings[4].level = faci.e;
+        
         coin = new Coin(SaveMachine.Instance.saveData.Resource);
     }
 
