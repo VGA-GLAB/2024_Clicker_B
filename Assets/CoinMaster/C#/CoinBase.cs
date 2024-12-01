@@ -14,6 +14,9 @@ public class Coin
         this.resource = resource;
     }
 
+    public long ToLong()
+        => (resource / (long)digit) >= long.MaxValue ? long.MaxValue : (long)(resource / (long)digit);
+
     public static implicit operator BigInteger(Coin coin)
         => coin.resource;
 
