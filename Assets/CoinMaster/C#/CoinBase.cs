@@ -14,6 +14,19 @@ public class Coin
         this.resource = resource;
     }
 
+    public Coin(long resource)
+    {
+        this.resource = new BigInteger(resource) * (long)digit;
+    }
+
+    public Coin(double resource)
+    {
+        this.resource = new BigInteger(resource * (long)digit);
+    }
+
+    public long ToLong()
+        => (resource / (long)digit) >= long.MaxValue ? long.MaxValue : (long)(resource / (long)digit);
+
     public static implicit operator BigInteger(Coin coin)
         => coin.resource;
 
@@ -40,6 +53,11 @@ public class Coin
 
     public static bool operator <=(Coin coin, double amount)
         => (coin - amount).resource <= 0;
+    
+    public static bool operator >(Coin coin, double amount)
+        => (coin - amount).resource > 0;
+    public static bool operator <(Coin coin, double amount)
+        => (coin - amount).resource < 0;
 
     public override string ToString()
         => $"{resource / (int)digit}";
