@@ -95,8 +95,7 @@ public class SaveMachine : MonoBehaviour
         => (a << 8) | (b << 6) | (c << 4) | (d << 2) | e;
 
     public static (int a, int b, int c, int d, int e) Decode(int packed)
-        => (
-            (packed >> 8) & 0b11,
+        => ((packed >> 8) & 0b11,
             (packed >> 6) & 0b11,
             (packed >> 4) & 0b11,
             (packed >> 2) & 0b11,
