@@ -4079,7 +4079,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 2100}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 300, y: 900}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &733305290
@@ -8076,7 +8076,6 @@ MonoBehaviour:
   _slotButton: {fileID: 1398761930}
   _atkButton: {fileID: 1356678084}
   _slotOpenButton: {fileID: 519616269}
-  _slotCloseButton: {fileID: 2132552663}
   _coinText: {fileID: 1321264809}
   _slotCoinText: {fileID: 730341521}
   _buildings:
@@ -9278,6 +9277,7 @@ MonoBehaviour:
   _rollRectLeft: {fileID: 1395618128}
   _rollRectMiddle: {fileID: 733305289}
   _rollRectRight: {fileID: 1206560321}
+  _xButton: {fileID: 2132552663}
   _betUpButton: {fileID: 1510254876}
   _betDownButton: {fileID: 985514904}
   _betText: {fileID: 2071505507}

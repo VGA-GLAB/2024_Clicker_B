@@ -14,7 +14,6 @@ public class CoinManager : MonoBehaviour
     [SerializeField] private NewButton _atkButton;
 
     [SerializeField] private NewButton _slotOpenButton;
-    [SerializeField] private NewButton _slotCloseButton;
 
     [SerializeField] private Text _coinText;
     [SerializeField] private Text _slotCoinText;
@@ -56,7 +55,6 @@ public class CoinManager : MonoBehaviour
         
         _slotButton.OnClick.AddListener(Slot);
 
-        _slotCloseButton.OnClick.AddListener(CloseSlotPanel);
         _slotOpenButton.OnClick.AddListener(OpenSlotPanel);
         
         _atkPanel.SetActive(false);
@@ -109,7 +107,7 @@ public class CoinManager : MonoBehaviour
     {
         _slotPanel.SetActive(true);
     }
-    private void CloseSlotPanel()
+    public void CloseSlotPanel()
     {
         _slotPanel.SetActive(false);
     }

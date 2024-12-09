@@ -12,6 +12,9 @@ public class SlotAnimeSystem : MonoBehaviour
     private RectTransform _rollRectMiddle;
     [SerializeField]
     private RectTransform _rollRectRight;
+    [Space]
+    [SerializeField]
+    private NewButton _xButton;
 
     [Space]
     [SerializeField]
@@ -32,6 +35,8 @@ public class SlotAnimeSystem : MonoBehaviour
         _rollRectLeft.anchoredPosition = new Vector2(-250, Random.Range(0, 100) * 300 % 2100);
         _rollRectMiddle.anchoredPosition = new Vector2(0, Random.Range(0, 100) * 300 % 2100);
         _rollRectRight.anchoredPosition = new Vector2(250, Random.Range(0, 100) * 300 % 2100);
+
+        _xButton.OnClick.AddListener(CloseSlotPanel);
 
         _betUpButton.OnClick.AddListener(BetUp);
         _betDownButton.OnClick.AddListener(BetDown);
@@ -140,10 +145,17 @@ public class SlotAnimeSystem : MonoBehaviour
     }
     void BetUp()
     {
-        _betValue = Mathf.Clamp(_betValue + 1, 1, (int)CoinManager.Instance.coin.ToLong());
+        if (!_isNowRoll)
+            _betValue = Mathf.Clamp(_betValue + 1, 1, (int)CoinManager.Instance.coin.ToLong());
     }
     void BetDown()
     {
-        _betValue = Mathf.Clamp(_betValue - 1, 1, (int)CoinManager.Instance.coin.ToLong());
+        if (!_isNowRoll)
+            _betValue = Mathf.Clamp(_betValue - 1, 1, (int)CoinManager.Instance.coin.ToLong());
+    }
+    void CloseSlotPanel()
+    {
+        if(!_isNowRoll)
+            CoinManager.Instance.CloseSlotPanel();
     }
 }
