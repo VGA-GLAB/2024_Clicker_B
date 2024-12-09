@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,10 +13,14 @@ public class Building : MonoBehaviour
     private NewButton button;
     private Text text;
     
-    public string name;
-    public int[] cost;
+    public string Name;
+    public int[] Cost;
+    public double[] CoinPerClick;
     public double[] CoinPerSec;
-    
+
+    [SerializeField]
+    private GameObject[] _models;
+
     [Range(0,3)]
     public int level;
     void Awake()
@@ -41,9 +46,9 @@ public class Building : MonoBehaviour
     {
         if(level >= 3)
             return;
-        if (Manager.CanBuy(cost[level]))
+        if (Manager.CanBuy(Cost[level]))
         {
-            Manager.BuyBuilding(cost[level]);
+            Manager.BuyBuilding(Cost[level]);
             level++;
             TextUpdate();
         }
@@ -52,8 +57,12 @@ public class Building : MonoBehaviour
     public void TextUpdate()
     {
         if (level >= 3)
-            text.text = $"{name} Max ";
+            text.text = $"{Name} Max ";
         else
-            text.text = $"{name} Lv{level} {cost[level]}G";
+            text.text = $"{Name} Lv{level} {Cost[level]}G";
+
+        _models.ToList().ForEach(x => x?.SetActive(false));
+        if(level > 0)
+        _models[Mathf.Clamp(level - 1, 0, 2)]?.SetActive(true);
     }
 }

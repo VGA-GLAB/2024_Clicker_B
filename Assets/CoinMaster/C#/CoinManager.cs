@@ -8,17 +8,26 @@ using UnityEngine.UI;
 public class CoinManager : MonoBehaviour
 {
     public static CoinManager Instance;
+    [SerializeField] private SlotAnimeSystem _slotAnimeSystem;
     [SerializeField] private NewButton _coinButton;
     [SerializeField] private NewButton _slotButton;
     [SerializeField] private NewButton _atkButton;
+
+    [SerializeField] private NewButton _slotOpenButton;
+    [SerializeField] private NewButton _slotCloseButton;
+
     [SerializeField] private Text _coinText;
+    [SerializeField] private Text _slotCoinText;
     [SerializeField] private Building[] _buildings;
 
     [SerializeField] private GameObject _atkPanel;
-    
+    [SerializeField] private GameObject _slotPanel;
     public Coin coin { get; private set; }
 
     public Coin totalTakeCoin;
+
+    private SlotSystem _slotSystem;
+    private SlotSystem.ResultData _resultData;
 
     public int[] buildingsLv()
         => _buildings.Select(x => x.level).ToArray();
@@ -34,6 +43,11 @@ public class CoinManager : MonoBehaviour
 
     private void Start()
     {
+        _atkPanel.SetActive(true);
+        _slotPanel.SetActive(true);
+
+
+        _slotSystem = new();
         
         _coinButton.OnClick.AddListener(AddCoin);
         _coinButton.OnClick.AddListener(ChangeCoinText);
@@ -41,8 +55,12 @@ public class CoinManager : MonoBehaviour
         _atkButton.OnClick.AddListener(CloseAtkPanel);
         
         _slotButton.OnClick.AddListener(Slot);
+
+        _slotCloseButton.OnClick.AddListener(CloseSlotPanel);
+        _slotOpenButton.OnClick.AddListener(OpenSlotPanel);
         
         _atkPanel.SetActive(false);
+        _slotPanel.SetActive(false);
 
         var faci = SaveMachine.Decode(SaveMachine.Instance.saveData.Facility);
         _buildings[0].level = faci.a;
@@ -61,9 +79,7 @@ public class CoinManager : MonoBehaviour
 
     private void Update()
     {
-        double add = 0;
-        for (int i = 0; i < _buildings.Length; i++)
-            add += _buildings[i].CoinPerSec[_buildings[i].level];
+        double add = _buildings.Sum(x => x.CoinPerSec[x.level]);
 
         coin += add * Time.deltaTime;
         totalTakeCoin += add * Time.deltaTime;
@@ -72,19 +88,30 @@ public class CoinManager : MonoBehaviour
 
     private void Slot()
     {
-        bool correct = Random.Range(0, 10) == 0;
-        if(!correct)
-            return;
-        float times = Random.Range(2, 11);
-        if(times == 10)
+        _slotSystem.CalcSlot(out _resultData);
+        _slotAnimeSystem.Slot(_resultData.resultEnum);
+
+    }
+    public void SlotResult(int bet)
+    {
+        if(_resultData.isBolt)
             _atkPanel.SetActive(true);
-        coin *= times;
-        totalTakeCoin *= times;
+        coin += (bet * _resultData.times) - bet;
+        totalTakeCoin += (bet * _resultData.times) - bet;
     }
 
     private void CloseAtkPanel()
     {
         _atkPanel.SetActive(false);
+    }
+
+    private void OpenSlotPanel()
+    {
+        _slotPanel.SetActive(true);
+    }
+    private void CloseSlotPanel()
+    {
+        _slotPanel.SetActive(false);
     }
     
     public bool CanBuy(double cost)
@@ -97,11 +124,14 @@ public class CoinManager : MonoBehaviour
 
     private void AddCoin()
     {
-        coin++;
+        double add = _buildings.Sum(x => x.CoinPerClick[x.level]);
+
+        coin += 1 + add;
         totalTakeCoin++;
     }
     private void ChangeCoinText()
     {
         _coinText.text = coin.ToString();
+        _slotCoinText.text = coin.ToString();
     }
 }
