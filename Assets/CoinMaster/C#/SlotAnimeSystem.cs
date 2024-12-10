@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class SlotAnimeSystem : MonoBehaviour
 {
@@ -32,9 +33,9 @@ public class SlotAnimeSystem : MonoBehaviour
 
     void Start()
     {
-        _rollRectLeft.anchoredPosition = new Vector2(-250, Random.Range(0, 100) * 300 % 2100);
-        _rollRectMiddle.anchoredPosition = new Vector2(0, Random.Range(0, 100) * 300 % 2100);
-        _rollRectRight.anchoredPosition = new Vector2(250, Random.Range(0, 100) * 300 % 2100);
+        _rollRectLeft.anchoredPosition = new Vector2(-250, Random.Range(0, 5) * 300 % 2100);
+        _rollRectMiddle.anchoredPosition = new Vector2(0, Random.Range(6, 9) * 300 % 2100);
+        _rollRectRight.anchoredPosition = new Vector2(250, Random.Range(9, 16) * 300 % 2100);
 
         _xButton.OnClick.AddListener(CloseSlotPanel);
 
@@ -56,9 +57,9 @@ public class SlotAnimeSystem : MonoBehaviour
         if (_isNowRoll)
             return;
         _isNowRoll = true;
-        _rollRectLeft.anchoredPosition = new Vector2(-250, Random.Range(0,100) * 300);
-        _rollRectMiddle.anchoredPosition = new Vector2(0, Random.Range(0, 100) * 300);
-        _rollRectRight.anchoredPosition = new Vector2(250, Random.Range(0, 100) * 300);
+        _rollRectLeft.anchoredPosition = new Vector2(-250, Random.Range(0, 100) * 300 % 2100);
+        _rollRectMiddle.anchoredPosition = new Vector2(0, Random.Range(0, 100) * 300 % 2100);
+        _rollRectRight.anchoredPosition = new Vector2(250, Random.Range(0, 100) * 300 % 2100);
 
         StartCoroutine(RollAnime(result));
     }
@@ -73,14 +74,14 @@ public class SlotAnimeSystem : MonoBehaviour
         int stop = 0;
 
         int seed = Random.Range(0, 999);
-        int a = Random.Range(0, 4);
+        int a = Random.Range(0, 2);
 
         float startTime = Time.time;
         while (true)
         {
             left = CalcRoll(left, mode, ref stop, 1, seed);
-            middle = CalcRoll(middle, mode, ref stop, 2, seed + a);
-            right = CalcRoll(right, mode, ref stop, 3, seed + 5);
+            middle = CalcRoll(middle, mode, ref stop, 3, seed + a);
+            right = CalcRoll(right, mode, ref stop, 5, seed + 5);
 
             left %= 2400;
             middle %= 2400;
@@ -96,8 +97,17 @@ public class SlotAnimeSystem : MonoBehaviour
                 if (Time.time - startTime > 2)
                     stop = 1;
             }
-            if (stop is 4)
+            else if (stop is 6)
                 break;
+            else if (stop is 2||stop is 4)
+            {
+                if (Time.time - startTime > 1)
+                    stop++;
+            }
+            else
+            {
+                startTime = Time.time;
+            }
         }
         _isNowRoll = false;
         Sloted();
