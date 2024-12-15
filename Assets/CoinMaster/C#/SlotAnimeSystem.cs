@@ -54,8 +54,14 @@ public class SlotAnimeSystem : MonoBehaviour
     }
     public void Slot(SlotSystem.ResultEnum result = SlotSystem.ResultEnum.Miss)
     {
+        if ((int)CoinManager.Instance.coin.ToLong() <= 0)
+            return;
         if (_isNowRoll)
             return;
+
+        _betValue = Mathf.Clamp(_betValue + 1, 1, (int)CoinManager.Instance.coin.ToLong());
+        _betValue = _betValue <= 1 ? 1 : _betValue;
+
         _isNowRoll = true;
         _rollRectLeft.anchoredPosition = new Vector2(-250, Random.Range(0, 100) * 300 % 2100);
         _rollRectMiddle.anchoredPosition = new Vector2(0, Random.Range(0, 100) * 300 % 2100);
@@ -126,11 +132,11 @@ public class SlotAnimeSystem : MonoBehaviour
                 return SlotImgPos(mode, seed);
             }
             else
-                return current + 3000 * Time.deltaTime;
+                return current + 6000 * Time.deltaTime;
         }
         else
         {
-            return current + 3000 * Time.deltaTime;
+            return current + 6000 * Time.deltaTime;
         }
     }
     int SlotImgPos(SlotSystem.ResultEnum mode,int missValue)
@@ -143,8 +149,8 @@ public class SlotAnimeSystem : MonoBehaviour
             SlotSystem.ResultEnum.Bank => 3,
             SlotSystem.ResultEnum.Box => 4,
             SlotSystem.ResultEnum.Bolt => 5,
-            SlotSystem.ResultEnum.Clover => 6,
-            SlotSystem.ResultEnum.Trophy => 7,
+            SlotSystem.ResultEnum.Trophy => 6,
+            SlotSystem.ResultEnum.Clover => 7,
             SlotSystem.ResultEnum.Miss => missValue % 8,
             _ => missValue % 8,
         } * 300;
@@ -155,17 +161,23 @@ public class SlotAnimeSystem : MonoBehaviour
     }
     void BetUp()
     {
-        if (!_isNowRoll)
-            _betValue = Mathf.Clamp(_betValue + 1, 1, (int)CoinManager.Instance.coin.ToLong());
+        if (_isNowRoll)
+            return;
+        _betValue = Mathf.Clamp(_betValue + 1, 1, (int)CoinManager.Instance.coin.ToLong());
+        _betValue = _betValue <= 1 ? 1 : _betValue;
     }
     void BetDown()
     {
-        if (!_isNowRoll)
-            _betValue = Mathf.Clamp(_betValue - 1, 1, (int)CoinManager.Instance.coin.ToLong());
+        if (_isNowRoll)
+            return;
+        _betValue = Mathf.Clamp(_betValue - 1, 1, (int)CoinManager.Instance.coin.ToLong());
+        _betValue = _betValue <= 1 ? 1 : _betValue;
     }
     void CloseSlotPanel()
     {
-        if(!_isNowRoll)
-            CoinManager.Instance.CloseSlotPanel();
+        if (_isNowRoll)
+            return;
+        CoinManager.Instance._panelState = CoinManager.PanelState.InGame;
+        CoinManager.Instance.PanelActive();
     }
 }
