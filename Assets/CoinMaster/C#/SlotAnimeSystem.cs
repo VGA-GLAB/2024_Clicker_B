@@ -25,6 +25,10 @@ public class SlotAnimeSystem : MonoBehaviour
     [SerializeField]
     private Text _betText;
 
+    [Space]
+    [SerializeField]
+    private GameObject _lowMoneyObj;
+
     private bool _isNowRoll;
     public bool IsSpinning { get { return _isNowRoll; } }
     private int _betValue;
@@ -55,13 +59,14 @@ public class SlotAnimeSystem : MonoBehaviour
     }
     public void Slot(SlotSystem.ResultEnum result = SlotSystem.ResultEnum.Miss)
     {
-        if ((int)CoinManager.Instance.coin.ToLong() <= 0)
+        if (CoinManager.Instance.coin.ToLong() <= 0)
+            return;
+        if (CoinManager.Instance.coin.ToLong() < _betValue)
             return;
         if (_isNowRoll)
             return;
 
-        _betValue = Mathf.Clamp(_betValue + 1, 1, (int)CoinManager.Instance.coin.ToLong());
-        _betValue = _betValue <= 1 ? 1 : _betValue;
+        _betValue = Mathf.Clamp(_betValue, 1, int.MaxValue);
 
         _isNowRoll = true;
         _rollRectLeft.anchoredPosition = new Vector2(-250, Random.Range(0, 100) * 300 % 2100);
@@ -72,6 +77,7 @@ public class SlotAnimeSystem : MonoBehaviour
     }
     void Update()
     {
+        _lowMoneyObj.SetActive(CoinManager.Instance.coin.ToLong() < _betValue);
     }
     IEnumerator RollAnime(SlotSystem.ResultEnum mode)
     {
@@ -99,14 +105,14 @@ public class SlotAnimeSystem : MonoBehaviour
             _rollRectRight.anchoredPosition = new Vector2(250, right);
             yield return null;
 
-            if(stop is 0)
+            if (stop is 0)
             {
                 if (Time.time - startTime > 2)
                     stop = 1;
             }
             else if (stop is 6)
                 break;
-            else if (stop is 2||stop is 4)
+            else if (stop is 2 || stop is 4)
             {
                 if (Time.time - startTime > 1)
                     stop++;
@@ -123,11 +129,11 @@ public class SlotAnimeSystem : MonoBehaviour
     {
         CoinManager.Instance.SlotResult(_betValue);
     }
-    float CalcRoll(float current, SlotSystem.ResultEnum mode,ref int stop,int whenStop,int seed)
+    float CalcRoll(float current, SlotSystem.ResultEnum mode, ref int stop, int whenStop, int seed)
     {
         if (stop >= whenStop)
         {
-            if (Mathf.Abs(SlotImgPos(mode,seed) - current) < 100)
+            if (Mathf.Abs(SlotImgPos(mode, seed) - current) < 100)
             {
                 stop = stop == whenStop ? whenStop + 1 : stop;
                 return SlotImgPos(mode, seed);
@@ -140,7 +146,7 @@ public class SlotAnimeSystem : MonoBehaviour
             return current + 6000 * Time.deltaTime;
         }
     }
-    int SlotImgPos(SlotSystem.ResultEnum mode,int missValue)
+    int SlotImgPos(SlotSystem.ResultEnum mode, int missValue)
     {
         return mode switch
         {
@@ -164,15 +170,13 @@ public class SlotAnimeSystem : MonoBehaviour
     {
         if (_isNowRoll)
             return;
-        _betValue = Mathf.Clamp(_betValue + 1, 1, (int)CoinManager.Instance.coin.ToLong());
-        _betValue = _betValue <= 1 ? 1 : _betValue;
+        _betValue = Mathf.Clamp(_betValue + 1, 1, int.MaxValue);
     }
     void BetDown()
     {
         if (_isNowRoll)
             return;
-        _betValue = Mathf.Clamp(_betValue - 1, 1, (int)CoinManager.Instance.coin.ToLong());
-        _betValue = _betValue <= 1 ? 1 : _betValue;
+        _betValue = Mathf.Clamp(_betValue - 1, 1, int.MaxValue);
     }
     void CloseSlotPanel()
     {
