@@ -69,13 +69,21 @@ public class SaveMachine : MonoBehaviour
     async void Login()
     {
         loginData = await CoinMasterNetwork.Login();
+        if(loginData.user.name is "noname")
+        {
+            CoinManager.Instance._panelState = CoinManager.PanelState.NameSetting;
+            CoinManager.Instance.PanelActive();
+        }
+        else
+        {
+            CoinManager.Instance._panelState = CoinManager.PanelState.InGame;
+            CoinManager.Instance.PanelActive();
+        }
     }
 
     [ContextMenu("OnlineSave")]
-    void SaveOnline()
+    async void SaveOnline()
     {
-        //Debug.Log($"before:{CoinManager.Instance.coin}\nafter: {CoinManager.Instance.coin.ToLong()}");
-
         CoinMasterNetwork.UpdateCoin(CoinManager.Instance.coin.ToLong());
             
         CoinMasterNetwork.UpdateName(loginData.user.name);
@@ -84,11 +92,8 @@ public class SaveMachine : MonoBehaviour
         CoinMasterNetwork.UpdateFacility(Encode(faci[0], faci[1], faci[2], faci[3], faci[4]));
         
         
-        CoinMasterNetwork.Save();
-        
-        /*Debug.Log($"A{faci[0]},{faci[1]},{faci[2]},{faci[3]},{faci[4]}\n" +
-                  $"B{Encode(faci[0], faci[1], faci[2], faci[3], faci[4])}\n" +
-                  $"C{Decode(Encode(faci[0], faci[1], faci[2], faci[3], faci[4]))}");*/
+        var result = await CoinMasterNetwork.Save();
+        //result.stolenCoin
     }
 
     public static int Encode(int a, int b, int c, int d, int e)
