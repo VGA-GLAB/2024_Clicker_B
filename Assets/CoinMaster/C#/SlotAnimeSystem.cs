@@ -25,6 +25,7 @@ public class SlotAnimeSystem : MonoBehaviour
     private Text _betText;
 
     private bool _isNowRoll;
+    public bool IsSpinning { get { return _isNowRoll; } }
     private int _betValue;
 
     [SerializeField]
