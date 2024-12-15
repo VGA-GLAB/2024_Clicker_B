@@ -38,6 +38,7 @@ public class Building : MonoBehaviour
         if (Manager == null)
             Debug.LogError("CoinManager is null");
         button.OnEnter.AddListener(TextUpdate);
+        button.OnClick.AddListener(VillageClickSystem.instance.CloseTab);
         button.OnClick.AddListener(Buy);
         TextUpdate();
     }
