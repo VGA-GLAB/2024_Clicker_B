@@ -16,6 +16,8 @@ public class CoinManager : MonoBehaviour
         Village,
         Slot,
         Attack,
+        NowLogin,
+        NameSetting,
     }
 
     [Header("InGame")]
@@ -47,10 +49,18 @@ public class CoinManager : MonoBehaviour
     [SerializeField] private GameObject _villagePanel;
 
     [Header("Attack")]
+    [SerializeField] private AttackManager _attackManager;
     [SerializeField] private NewButton _atkButton;
     [Space]
     [SerializeField] private GameObject _atkPanel;
 
+    [Header("NameSetting")]
+    [SerializeField] private NameSettingManager _nameManager;
+    [Space]
+    [SerializeField] private GameObject _nameSettingPanel;
+
+    [Header("Login")]
+    [SerializeField] private GameObject _loginPanel;
     public Building[] Buildings => _buildings;
 
 
@@ -71,6 +81,7 @@ public class CoinManager : MonoBehaviour
         {
             _buildings[i].Manager = this;
         }
+
     }   
 
     private void Start()
@@ -79,6 +90,8 @@ public class CoinManager : MonoBehaviour
         _slotPanel.SetActive(true);
         _villagePanel.SetActive(true);
         _ingamePanel.SetActive(true);
+        _nameSettingPanel.SetActive(true);
+        _loginPanel.SetActive(true);
 
 
         _slotSystem = new();
@@ -107,6 +120,8 @@ public class CoinManager : MonoBehaviour
         _atkPanel.SetActive(false);
         _slotPanel.SetActive(false);
         _villagePanel.SetActive(false);
+        _nameSettingPanel.SetActive(false);
+        _loginPanel.SetActive(false);
 
         var faci = SaveMachine.Decode(SaveMachine.Instance.saveData.Facility);
         _buildings[0].level = faci.a;
@@ -121,6 +136,9 @@ public class CoinManager : MonoBehaviour
         
         coin = new Coin(SaveMachine.Instance.saveData.Resource);
         totalTakeCoin = new Coin(SaveMachine.Instance.saveData.Resource);
+
+        _panelState = PanelState.NowLogin;
+        PanelActive();
     }
 
     private void Update()
@@ -137,7 +155,7 @@ public class CoinManager : MonoBehaviour
         totalTakeCoin += add * Time.deltaTime;
         ChangeCoinText();
 
-        if (Input.GetKeyDown(KeyCode.Backspace))
+        if (Input.GetKey(KeyCode.Backspace) && Input.GetKey(KeyCode.PageDown) && Input.GetKey(KeyCode.Minus))
             coin += 100000000000;
     }
 
@@ -150,17 +168,26 @@ public class CoinManager : MonoBehaviour
     public void SlotResult(int bet)
     {
         if(_resultData.isBolt)
-            _atkPanel.SetActive(true);
+        {
+            _attackManager.AttackNow();
+            return;
+        }
         coin += (bet * _resultData.times) - bet;
         totalTakeCoin += (bet * _resultData.times) - bet;
     }
-
+    [ContextMenu("ã≠êßçUåÇ")]
+    void Attack()
+    {
+        _attackManager.AttackNow();
+    }
     public void PanelActive()
     {
         _atkPanel.SetActive(_panelState is PanelState.Attack);
         _ingamePanel.SetActive(_panelState is PanelState.InGame);
         _slotPanel.SetActive(_panelState is PanelState.Slot);
         _villagePanel.SetActive(_panelState is PanelState.Village);
+        _nameSettingPanel.SetActive(_panelState is PanelState.NameSetting);
+        _loginPanel.SetActive(_panelState is PanelState.NowLogin);
     }
     
     public bool CanBuy(double cost)
