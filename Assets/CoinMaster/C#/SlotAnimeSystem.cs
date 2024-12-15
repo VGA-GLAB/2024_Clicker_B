@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class SlotAnimeSystem : MonoBehaviour
 {
@@ -33,9 +34,9 @@ public class SlotAnimeSystem : MonoBehaviour
 
     void Start()
     {
-        _rollRectLeft.anchoredPosition = new Vector2(-250, Random.Range(0, 100) * 300 % 2100);
-        _rollRectMiddle.anchoredPosition = new Vector2(0, Random.Range(0, 100) * 300 % 2100);
-        _rollRectRight.anchoredPosition = new Vector2(250, Random.Range(0, 100) * 300 % 2100);
+        _rollRectLeft.anchoredPosition = new Vector2(-250, Random.Range(0, 5) * 300 % 2100);
+        _rollRectMiddle.anchoredPosition = new Vector2(0, Random.Range(6, 9) * 300 % 2100);
+        _rollRectRight.anchoredPosition = new Vector2(250, Random.Range(9, 16) * 300 % 2100);
 
         _xButton.OnClick.AddListener(CloseSlotPanel);
 
@@ -54,12 +55,18 @@ public class SlotAnimeSystem : MonoBehaviour
     }
     public void Slot(SlotSystem.ResultEnum result = SlotSystem.ResultEnum.Miss)
     {
+        if ((int)CoinManager.Instance.coin.ToLong() <= 0)
+            return;
         if (_isNowRoll)
             return;
+
+        _betValue = Mathf.Clamp(_betValue + 1, 1, (int)CoinManager.Instance.coin.ToLong());
+        _betValue = _betValue <= 1 ? 1 : _betValue;
+
         _isNowRoll = true;
-        _rollRectLeft.anchoredPosition = new Vector2(-250, Random.Range(0,100) * 300);
-        _rollRectMiddle.anchoredPosition = new Vector2(0, Random.Range(0, 100) * 300);
-        _rollRectRight.anchoredPosition = new Vector2(250, Random.Range(0, 100) * 300);
+        _rollRectLeft.anchoredPosition = new Vector2(-250, Random.Range(0, 100) * 300 % 2100);
+        _rollRectMiddle.anchoredPosition = new Vector2(0, Random.Range(0, 100) * 300 % 2100);
+        _rollRectRight.anchoredPosition = new Vector2(250, Random.Range(0, 100) * 300 % 2100);
 
         StartCoroutine(RollAnime(result));
     }
@@ -74,14 +81,14 @@ public class SlotAnimeSystem : MonoBehaviour
         int stop = 0;
 
         int seed = Random.Range(0, 999);
-        int a = Random.Range(0, 4);
+        int a = Random.Range(0, 2);
 
         float startTime = Time.time;
         while (true)
         {
             left = CalcRoll(left, mode, ref stop, 1, seed);
-            middle = CalcRoll(middle, mode, ref stop, 2, seed + a);
-            right = CalcRoll(right, mode, ref stop, 3, seed + 5);
+            middle = CalcRoll(middle, mode, ref stop, 3, seed + a);
+            right = CalcRoll(right, mode, ref stop, 5, seed + 5);
 
             left %= 2400;
             middle %= 2400;
@@ -97,8 +104,17 @@ public class SlotAnimeSystem : MonoBehaviour
                 if (Time.time - startTime > 2)
                     stop = 1;
             }
-            if (stop is 4)
+            else if (stop is 6)
                 break;
+            else if (stop is 2||stop is 4)
+            {
+                if (Time.time - startTime > 1)
+                    stop++;
+            }
+            else
+            {
+                startTime = Time.time;
+            }
         }
         _isNowRoll = false;
         Sloted();
@@ -117,11 +133,11 @@ public class SlotAnimeSystem : MonoBehaviour
                 return SlotImgPos(mode, seed);
             }
             else
-                return current + 3000 * Time.deltaTime;
+                return current + 6000 * Time.deltaTime;
         }
         else
         {
-            return current + 3000 * Time.deltaTime;
+            return current + 6000 * Time.deltaTime;
         }
     }
     int SlotImgPos(SlotSystem.ResultEnum mode,int missValue)
@@ -134,8 +150,8 @@ public class SlotAnimeSystem : MonoBehaviour
             SlotSystem.ResultEnum.Bank => 3,
             SlotSystem.ResultEnum.Box => 4,
             SlotSystem.ResultEnum.Bolt => 5,
-            SlotSystem.ResultEnum.Clover => 6,
-            SlotSystem.ResultEnum.Trophy => 7,
+            SlotSystem.ResultEnum.Trophy => 6,
+            SlotSystem.ResultEnum.Clover => 7,
             SlotSystem.ResultEnum.Miss => missValue % 8,
             _ => missValue % 8,
         } * 300;
@@ -146,17 +162,23 @@ public class SlotAnimeSystem : MonoBehaviour
     }
     void BetUp()
     {
-        if (!_isNowRoll)
-            _betValue = Mathf.Clamp(_betValue + 1, 1, (int)CoinManager.Instance.coin.ToLong());
+        if (_isNowRoll)
+            return;
+        _betValue = Mathf.Clamp(_betValue + 1, 1, (int)CoinManager.Instance.coin.ToLong());
+        _betValue = _betValue <= 1 ? 1 : _betValue;
     }
     void BetDown()
     {
-        if (!_isNowRoll)
-            _betValue = Mathf.Clamp(_betValue - 1, 1, (int)CoinManager.Instance.coin.ToLong());
+        if (_isNowRoll)
+            return;
+        _betValue = Mathf.Clamp(_betValue - 1, 1, (int)CoinManager.Instance.coin.ToLong());
+        _betValue = _betValue <= 1 ? 1 : _betValue;
     }
     void CloseSlotPanel()
     {
-        if(!_isNowRoll)
-            CoinManager.Instance.CloseSlotPanel();
+        if (_isNowRoll)
+            return;
+        CoinManager.Instance._panelState = CoinManager.PanelState.InGame;
+        CoinManager.Instance.PanelActive();
     }
 }

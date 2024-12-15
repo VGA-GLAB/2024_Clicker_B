@@ -8,19 +8,52 @@ using UnityEngine.UI;
 public class CoinManager : MonoBehaviour
 {
     public static CoinManager Instance;
-    [SerializeField] private SlotAnimeSystem _slotAnimeSystem;
+
+    public PanelState _panelState;
+    public enum PanelState
+    {
+        InGame,
+        Village,
+        Slot,
+        Attack,
+    }
+
+    [Header("InGame")]
     [SerializeField] private NewButton _coinButton;
-    [SerializeField] private NewButton _slotButton;
-    [SerializeField] private NewButton _atkButton;
-
+    [Space]
     [SerializeField] private NewButton _slotOpenButton;
-
+    [SerializeField] private NewButton _villageOpenButton;
+    [Space]
     [SerializeField] private Text _coinText;
-    [SerializeField] private Text _slotCoinText;
-    [SerializeField] private Building[] _buildings;
+    [Space]
+    [SerializeField] private Text _resourceStatusText;
+    [SerializeField] private Text _buildingStatusLeftText;
+    [SerializeField] private Text _buildingStatusRightText;
+    [Space]
+    [SerializeField] private GameObject _ingamePanel;
 
-    [SerializeField] private GameObject _atkPanel;
+    [Header("Slot")]
+    [SerializeField] private SlotAnimeSystem _slotAnimeSystem;
+    [SerializeField] private Text _slotCoinText;
+    [Space]
+    [SerializeField] private NewButton _slotButton;
+    [Space]
     [SerializeField] private GameObject _slotPanel;
+
+    [Header("Village")]
+    [SerializeField] private Building[] _buildings;
+    [SerializeField] private NewButton _villageCloseButton;
+    [Space]
+    [SerializeField] private GameObject _villagePanel;
+
+    [Header("Attack")]
+    [SerializeField] private NewButton _atkButton;
+    [Space]
+    [SerializeField] private GameObject _atkPanel;
+
+    public Building[] Buildings => _buildings;
+
+
     public Coin coin { get; private set; }
 
     public Coin totalTakeCoin;
@@ -44,6 +77,8 @@ public class CoinManager : MonoBehaviour
     {
         _atkPanel.SetActive(true);
         _slotPanel.SetActive(true);
+        _villagePanel.SetActive(true);
+        _ingamePanel.SetActive(true);
 
 
         _slotSystem = new();
@@ -51,14 +86,27 @@ public class CoinManager : MonoBehaviour
         _coinButton.OnClick.AddListener(AddCoin);
         _coinButton.OnClick.AddListener(ChangeCoinText);
         
-        _atkButton.OnClick.AddListener(CloseAtkPanel);
-        
+        _atkButton.OnClick.AddListener(() => _panelState = PanelState.Slot);
+        _atkButton.OnClick.AddListener(PanelActive);
+
+        _slotOpenButton.OnClick.AddListener(() => _panelState = PanelState.Slot);
+        _slotOpenButton.OnClick.AddListener(PanelActive);
+
+        _villageOpenButton.OnClick.AddListener(() => _panelState = PanelState.Village);
+        _villageOpenButton.OnClick.AddListener(PanelActive);
+
+        _villageCloseButton.OnClick.AddListener(() => _panelState = PanelState.InGame);
+        _villageCloseButton.OnClick.AddListener(PanelActive);
+
+
         _slotButton.OnClick.AddListener(Slot);
 
-        _slotOpenButton.OnClick.AddListener(OpenSlotPanel);
         
+
+
         _atkPanel.SetActive(false);
         _slotPanel.SetActive(false);
+        _villagePanel.SetActive(false);
 
         var faci = SaveMachine.Decode(SaveMachine.Instance.saveData.Facility);
         _buildings[0].level = faci.a;
@@ -77,11 +125,20 @@ public class CoinManager : MonoBehaviour
 
     private void Update()
     {
+        _resourceStatusText.text = $"{1 + (long)_buildings.Sum(x => x.CoinPerClick[x.level])}coin –ˆƒNƒŠƒbƒN\n{(long)_buildings.Sum(x => x.CoinPerSec[x.level])}coin –ˆ•b";
+        _buildingStatusLeftText.text = string.Join("\n", _buildings.Select(x => x.Name).ToArray());
+
+        _buildingStatusRightText.text = string.Join("\n", _buildings.Select(y => $": Level "+ ((y.level is 3) ? "Max" : y.level)).ToArray());
+
+
         double add = _buildings.Sum(x => x.CoinPerSec[x.level]);
 
         coin += add * Time.deltaTime;
         totalTakeCoin += add * Time.deltaTime;
         ChangeCoinText();
+
+        if (Input.GetKeyDown(KeyCode.Backspace))
+            coin += 100000000000;
     }
 
     private void Slot()
@@ -98,18 +155,12 @@ public class CoinManager : MonoBehaviour
         totalTakeCoin += (bet * _resultData.times) - bet;
     }
 
-    private void CloseAtkPanel()
+    public void PanelActive()
     {
-        _atkPanel.SetActive(false);
-    }
-
-    private void OpenSlotPanel()
-    {
-        _slotPanel.SetActive(true);
-    }
-    public void CloseSlotPanel()
-    {
-        _slotPanel.SetActive(false);
+        _atkPanel.SetActive(_panelState is PanelState.Attack);
+        _ingamePanel.SetActive(_panelState is PanelState.InGame);
+        _slotPanel.SetActive(_panelState is PanelState.Slot);
+        _villagePanel.SetActive(_panelState is PanelState.Village);
     }
     
     public bool CanBuy(double cost)
