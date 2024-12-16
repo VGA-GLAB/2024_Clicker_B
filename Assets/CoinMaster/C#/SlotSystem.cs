@@ -29,17 +29,17 @@ public class SlotSystem
         float dice = Random.Range(0f, 99f);
         var resultEnum = dice switch
         {
-            < (5 + 0) => ResultEnum.Bolt,
-            < (0.1f + 5) => ResultEnum.Box,
-            < (0.5f + 5.1f) => ResultEnum.Trophy,
-            < (1.4f + 5.6f) => ResultEnum.Bank,
-            < (3 + 7) => ResultEnum.CoinBag,
-            < (5 + 10) => ResultEnum.Coin,
-            < (10 + 15) => ResultEnum.Meat,
-            < (30 + 25) => ResultEnum.Clover,
+            < (10 + 0) => ResultEnum.Bolt,
+            < (0.1f + 10) => ResultEnum.Box,
+            < (0.5f + 10.1f) => ResultEnum.Trophy,
+            < (1.4f + 10.6f) => ResultEnum.Bank,
+            < (3 + 12) => ResultEnum.CoinBag,
+            < (5 + 15) => ResultEnum.Coin,
+            < (10 + 20) => ResultEnum.Meat,
+            < (30 + 30) => ResultEnum.Clover,
             _ => ResultEnum.Miss,
         };
-
+        Debug.Log(resultEnum.ToString());
         result.isBolt = false;
         result.times = 0;
         result.resultEnum = resultEnum;

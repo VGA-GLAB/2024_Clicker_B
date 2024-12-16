@@ -1,6 +1,8 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -20,6 +22,9 @@ public class CoinManager : MonoBehaviour
         NameSetting,
     }
 
+    [SerializeField] private Text[] _nameText;
+    [Space]
+
     [Header("InGame")]
     [SerializeField] private NewButton _coinButton;
     [Space]
@@ -38,8 +43,6 @@ public class CoinManager : MonoBehaviour
     [SerializeField] private SlotAnimeSystem _slotAnimeSystem;
     [SerializeField] private Text _slotCoinText;
     [Space]
-    [SerializeField] private NewButton _slotButton;
-    [Space]
     [SerializeField] private GameObject _slotPanel;
 
     [Header("Village")]
@@ -50,7 +53,7 @@ public class CoinManager : MonoBehaviour
 
     [Header("Attack")]
     [SerializeField] private AttackManager _attackManager;
-    [SerializeField] private NewButton _atkButton;
+    //[SerializeField] private NewButton _atkButton;
     [Space]
     [SerializeField] private GameObject _atkPanel;
 
@@ -61,6 +64,9 @@ public class CoinManager : MonoBehaviour
 
     [Header("Login")]
     [SerializeField] private GameObject _loginPanel;
+
+    [Header("Stolen")]
+    [SerializeField] private GameObject _stolenPanel;
     public Building[] Buildings => _buildings;
 
 
@@ -86,6 +92,8 @@ public class CoinManager : MonoBehaviour
 
     private void Start()
     {
+        _stolenPanel.SetActive(false);
+
         _atkPanel.SetActive(true);
         _slotPanel.SetActive(true);
         _villagePanel.SetActive(true);
@@ -98,21 +106,15 @@ public class CoinManager : MonoBehaviour
         
         _coinButton.OnClick.AddListener(AddCoin);
         _coinButton.OnClick.AddListener(ChangeCoinText);
-        
-        _atkButton.OnClick.AddListener(() => _panelState = PanelState.Slot);
-        _atkButton.OnClick.AddListener(PanelActive);
 
         _slotOpenButton.OnClick.AddListener(() => _panelState = PanelState.Slot);
-        _slotOpenButton.OnClick.AddListener(PanelActive);
+        _slotOpenButton.OnClick.AddListener(() => PanelActive());
 
         _villageOpenButton.OnClick.AddListener(() => _panelState = PanelState.Village);
-        _villageOpenButton.OnClick.AddListener(PanelActive);
+        _villageOpenButton.OnClick.AddListener(() => PanelActive());
 
         _villageCloseButton.OnClick.AddListener(() => _panelState = PanelState.InGame);
-        _villageCloseButton.OnClick.AddListener(PanelActive);
-
-
-        _slotButton.OnClick.AddListener(Slot);
+        _villageCloseButton.OnClick.AddListener(() => PanelActive());
 
         
 
@@ -133,12 +135,12 @@ public class CoinManager : MonoBehaviour
         {
             building.TextUpdate();
         }
-        
+
         coin = new Coin(SaveMachine.Instance.saveData.Resource);
         totalTakeCoin = new Coin(SaveMachine.Instance.saveData.Resource);
 
         _panelState = PanelState.NowLogin;
-        PanelActive();
+        PanelActive(false);
     }
 
     private void Update()
@@ -146,7 +148,7 @@ public class CoinManager : MonoBehaviour
         _resourceStatusText.text = $"{1 + (long)_buildings.Sum(x => x.CoinPerClick[x.level])}coin –ˆƒNƒŠƒbƒN\n{(long)_buildings.Sum(x => x.CoinPerSec[x.level])}coin –ˆ•b";
         _buildingStatusLeftText.text = string.Join("\n", _buildings.Select(x => x.Name).ToArray());
 
-        _buildingStatusRightText.text = string.Join("\n", _buildings.Select(y => $": Level "+ ((y.level is 3) ? "Max" : y.level)).ToArray());
+        _buildingStatusRightText.text = string.Join("\n", _buildings.Select(y => $": Level " + ((y.level is 3) ? "Max" : y.level)).ToArray());
 
 
         double add = _buildings.Sum(x => x.CoinPerSec[x.level]);
@@ -155,32 +157,53 @@ public class CoinManager : MonoBehaviour
         totalTakeCoin += add * Time.deltaTime;
         ChangeCoinText();
 
-        if (Input.GetKey(KeyCode.Backspace) && Input.GetKey(KeyCode.PageDown) && Input.GetKey(KeyCode.Minus))
+#if UNITY_EDITOR
+        if (Input.GetKey(KeyCode.Backspace) && Input.GetKeyDown(KeyCode.KeypadMinus))
             coin += 100000000000;
+
+        if (Input.GetKey(KeyCode.Backspace) && Input.GetKeyDown(KeyCode.KeypadPlus))
+            Attack();
+#endif
+    }
+    public void Stolen(long money)
+    {
+        coin -= money;
+        coin.Set(coin <= 0 ? new(0): coin);
+        foreach(var item in _buildings)
+        {
+            item.Stolen();
+        }
+        OpenStolenText();
     }
 
-    private void Slot()
+    public void Slot()
     {
         _slotSystem.CalcSlot(out _resultData);
         _slotAnimeSystem.Slot(_resultData.resultEnum);
-
     }
-    public void SlotResult(int bet)
+    public void SlotResult(long bet)
     {
         if(_resultData.isBolt)
         {
-            _attackManager.AttackNow();
+            _attackManager.AttackNow(bet);
+            coin  -= bet;
+            totalTakeCoin -= bet;
             return;
         }
-        coin += (bet * _resultData.times) - bet;
-        totalTakeCoin += (bet * _resultData.times) - bet;
+        coin += ((BigInteger)bet * _resultData.times) - bet;
+        totalTakeCoin += ((BigInteger)bet * _resultData.times) - bet;
+    }
+    public void AttackResult(long stolenMoney)
+    {
+        coin += stolenMoney;
+        totalTakeCoin += stolenMoney;
     }
     [ContextMenu("‹­§UŒ‚")]
     void Attack()
     {
-        _attackManager.AttackNow();
+        _attackManager.AttackNow(long.MaxValue);
     }
-    public void PanelActive()
+    public void PanelActive(bool? textupdate = true)
     {
         _atkPanel.SetActive(_panelState is PanelState.Attack);
         _ingamePanel.SetActive(_panelState is PanelState.InGame);
@@ -188,6 +211,13 @@ public class CoinManager : MonoBehaviour
         _villagePanel.SetActive(_panelState is PanelState.Village);
         _nameSettingPanel.SetActive(_panelState is PanelState.NameSetting);
         _loginPanel.SetActive(_panelState is PanelState.NowLogin);
+
+        if (!(bool)textupdate)
+            return;
+        foreach (var text in _nameText)
+        {
+            text.text = SaveMachine.Instance.loginData.user.name;
+        }
     }
     
     public bool CanBuy(double cost)
@@ -209,5 +239,15 @@ public class CoinManager : MonoBehaviour
     {
         _coinText.text = coin.ToString();
         _slotCoinText.text = coin.ToString();
+    }
+    private async UniTask OpenStolenText()
+    {
+        for (int i = 0; i < 7; i++)
+        {
+            _stolenPanel.SetActive(true);
+            await UniTask.WaitForSeconds(0.5f);
+            _stolenPanel.SetActive(false);
+            await UniTask.WaitForSeconds(0.5f);
+        }
     }
 }

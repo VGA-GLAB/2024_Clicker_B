@@ -10,14 +10,21 @@ public class NewButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     [field: SerializeField] 
     public bool _isEnter {get; private set; }
     public UnityEvent OnClick {get; private set; }
+
+    public UnityEvent OnClicked { get; private set; }
     public UnityEvent OnEnter {get; private set; }
     public UnityEvent OnExit {get; private set; }
+
+    private bool _click;
     void Awake()
     {
         _isEnter = false;
         
         if(OnClick == null)
             OnClick = new UnityEvent();
+
+        if(OnClicked == null) 
+            OnClicked = new UnityEvent();
         
         if(OnEnter == null)
             OnEnter = new UnityEvent();
@@ -29,7 +36,16 @@ public class NewButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         if (_isEnter)
             if (Input.GetMouseButtonDown(0))
+            {
                 OnClick.Invoke();
+                _click = true;
+            }
+        if (_click)
+            if (Input.GetMouseButtonUp(0))
+            {
+                OnClicked.Invoke();
+                _click = false;
+            }
     }
 
     public void OnPointerEnter(PointerEventData eventData)

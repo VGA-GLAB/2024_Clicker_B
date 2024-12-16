@@ -45,7 +45,7 @@ public class Building : MonoBehaviour
 
     private void Buy()
     {
-        if(level >= 3)
+        if(level >= 9)
             return;
         if (Manager.CanBuy(Cost[level]))
         {
@@ -57,13 +57,18 @@ public class Building : MonoBehaviour
 
     public void TextUpdate()
     {
-        if (level >= 3)
+        if (level >= 9)
             text.text = $"{Name} Max ";
         else
             text.text = $"{Name} Lv{level} {Cost[level]}G";
 
         _models.ToList().ForEach(x => x?.SetActive(false));
         if(level > 0)
-        _models[Mathf.Clamp(level - 1, 0, 2)]?.SetActive(true);
+        _models[Mathf.Clamp((level - 1) / 3, 0, 2)]?.SetActive(true);
+    }
+    public void Stolen()
+    {
+        level = 0;
+        TextUpdate();
     }
 }
