@@ -100,6 +100,8 @@ public class SaveMachine : MonoBehaviour
             return;
         if (!result.isAttackedVillage)
             return;
+        if (result.stolenCoin <= 0)
+            return;
         CoinManager.Instance.Stolen(result.stolenCoin);
         SaveOnline(true);
     }

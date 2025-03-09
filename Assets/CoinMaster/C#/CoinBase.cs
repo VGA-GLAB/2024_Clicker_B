@@ -1,14 +1,10 @@
 using System.Numerics;
 
-public class Coin
+public struct Coin
 {
     private static readonly long _digit = (long)1e5;
-    private BigInteger _resource = new (0);
+    private BigInteger _resource;
 
-    public Coin()
-    {
-        this._resource = new (0);
-    }
     public Coin(BigInteger resource)
     {
         this._resource = resource;
