@@ -19,7 +19,7 @@ public class SaveMachine : MonoBehaviour
     
     private float savedTimeOnline;
     private float savedTimeLocal;
-    
+    private bool repair;
     public SaveData saveData{get; private set;}
     public LoginData loginData{get; private set;}
 
@@ -57,7 +57,7 @@ public class SaveMachine : MonoBehaviour
         saveData.TotalTake = new(CoinManager.Instance.totalTakeCoin);
         
         var faci = CoinManager.Instance.buildingsLv();
-        saveData.Facility = Encode(faci[0], faci[1], faci[2], faci[3], faci[4]);
+        saveData.Facility = Encode(faci,true);
         
         Debug.Log(JsonUtility.ToJson(saveData));
         
@@ -68,38 +68,63 @@ public class SaveMachine : MonoBehaviour
     [ContextMenu("OnlineLogin")]
     async void Login()
     {
+        repair = true;
         loginData = await CoinMasterNetwork.Login();
+        if(loginData.user.name is "noname")
+        {
+            CoinManager.Instance._panelState = CoinManager.PanelState.NameSetting;
+            CoinManager.Instance.PanelActive();
+        }
+        else
+        {
+            CoinManager.Instance._panelState = CoinManager.PanelState.InGame;
+            CoinManager.Instance.PanelActive();
+        }
     }
 
     [ContextMenu("OnlineSave")]
-    void SaveOnline()
+    void a() => SaveOnline();
+    async void SaveOnline(bool? a = false)
     {
-        //Debug.Log($"before:{CoinManager.Instance.coin}\nafter: {CoinManager.Instance.coin.ToLong()}");
-
         CoinMasterNetwork.UpdateCoin(CoinManager.Instance.coin.ToLong());
-            
-        CoinMasterNetwork.UpdateName(loginData.user.name);
         
         var faci = CoinManager.Instance.buildingsLv();
-        CoinMasterNetwork.UpdateFacility(Encode(faci[0], faci[1], faci[2], faci[3], faci[4]));
+        CoinMasterNetwork.UpdateFacility(Encode(faci, repair));
         
-        
-        CoinMasterNetwork.Save();
-        
-        /*Debug.Log($"A{faci[0]},{faci[1]},{faci[2]},{faci[3]},{faci[4]}\n" +
-                  $"B{Encode(faci[0], faci[1], faci[2], faci[3], faci[4])}\n" +
-                  $"C{Decode(Encode(faci[0], faci[1], faci[2], faci[3], faci[4]))}");*/
+        var result = await CoinMasterNetwork.Save();
+
+        Debug.Log($"{Encode(faci,true)}\n{JsonUtility.ToJson(result)}");
+        if (result is null)
+            return;
+        if ((bool)a)
+            return;
+        if (!result.isAttackedVillage)
+            return;
+        if (result.stolenCoin <= 0)
+            return;
+        CoinManager.Instance.Stolen(result.stolenCoin);
+        SaveOnline(true);
     }
+    public static int Encode(int[] lv,bool flag)
+        => Encode(lv[0], lv[1], lv[2], lv[3], lv[4],flag);
 
-    public static int Encode(int a, int b, int c, int d, int e)
-        => (a << 8) | (b << 6) | (c << 4) | (d << 2) | e;
+    public static int Encode(int a, int b, int c, int d, int e,bool flag)
+        =>(flag ? 1 : 0) << 20 | (a << 16) | (b << 12) | (c << 8) | (d << 4) | e;
 
-    public static (int a, int b, int c, int d, int e) Decode(int packed)
-        => ((packed >> 8) & 0b11,
-            (packed >> 6) & 0b11,
+    public static (int a, int b, int c, int d, int e,bool flag) Decode(int packed)
+        => ((packed >> 16) & 0b11,
+            (packed >> 12) & 0b11,
+            (packed >> 8) & 0b11,
             (packed >> 4) & 0b11,
-            (packed >> 2) & 0b11,
-            packed & 0b11);
+            packed & 0b11,
+            (packed >> 20) != 0);
+    [ContextMenu("AttackMyself")]
+    private async void Attack()
+    {
+        Debug.Log(loginData.user.uuid);
+        var result = await CoinMasterNetwork.Attack(loginData.user.uuid, 100);
+        Debug.Log(JsonUtility.ToJson(result));
+    }
 }
 
 public class SaveData

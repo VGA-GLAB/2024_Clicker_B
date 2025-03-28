@@ -7,6 +7,8 @@ using Random = UnityEngine.Random;
 
 public class SlotAnimeSystem : MonoBehaviour
 {
+    [SerializeField] private NewButton _slotButton;
+    [Space]
     [SerializeField]
     private RectTransform _rollRectLeft;
     [SerializeField]
@@ -25,9 +27,17 @@ public class SlotAnimeSystem : MonoBehaviour
     [SerializeField]
     private Text _betText;
 
+    [Space]
+    [SerializeField]
+    private GameObject _lowMoneyObj;
+
     private bool _isNowRoll;
     public bool IsSpinning { get { return _isNowRoll; } }
-    private int _betValue;
+    private long _betValue;
+
+    bool isBetUp;
+    bool isBetDown;
+    float betStartTime;
 
     [SerializeField]
     SlotSystem.ResultEnum _resultEnum;
@@ -40,12 +50,17 @@ public class SlotAnimeSystem : MonoBehaviour
 
         _xButton.OnClick.AddListener(CloseSlotPanel);
 
-        _betUpButton.OnClick.AddListener(BetUp);
-        _betDownButton.OnClick.AddListener(BetDown);
-        _betUpButton.OnClick.AddListener(BetTextUpdate);
-        _betDownButton.OnClick.AddListener(BetTextUpdate);
+        _betUpButton.OnClick.AddListener(() => BetUp(1));
+        _betUpButton.OnClick.AddListener(() => betStartTime = Time.time);
+        _betUpButton.OnClicked.AddListener(BetUpped);
+
+        _betDownButton.OnClick.AddListener(() => BetDown(1));
+        _betDownButton.OnClick.AddListener(() => betStartTime = Time.time);
+        _betDownButton.OnClicked.AddListener(BetDowned);
 
         _betValue = 1;
+
+        _slotButton.OnClick.AddListener(() => {if (!_isNowRoll) CoinManager.Instance.Slot(); });
         BetTextUpdate();
     }
     [ContextMenu("Start")]
@@ -55,13 +70,14 @@ public class SlotAnimeSystem : MonoBehaviour
     }
     public void Slot(SlotSystem.ResultEnum result = SlotSystem.ResultEnum.Miss)
     {
-        if ((int)CoinManager.Instance.coin.ToLong() <= 0)
+        if (CoinManager.Instance.coin.ToLong() <= 0)
+            return;
+        if (CoinManager.Instance.coin.ToLong() < _betValue)
             return;
         if (_isNowRoll)
             return;
 
-        _betValue = Mathf.Clamp(_betValue + 1, 1, (int)CoinManager.Instance.coin.ToLong());
-        _betValue = _betValue <= 1 ? 1 : _betValue;
+        _betValue = BetClamp(_betValue);
 
         _isNowRoll = true;
         _rollRectLeft.anchoredPosition = new Vector2(-250, Random.Range(0, 100) * 300 % 2100);
@@ -72,6 +88,36 @@ public class SlotAnimeSystem : MonoBehaviour
     }
     void Update()
     {
+        _lowMoneyObj.SetActive(CoinManager.Instance.coin.ToLong() < _betValue);
+
+        if (Time.time - betStartTime < 0.5f)
+            return;
+
+        long value = (Time.time - betStartTime) switch
+        {
+            < 2 => 1,
+            < 5 => 10,
+            < 8 => 100,
+            < 11 => (long)1e3,
+            < 14 => (long)1e4,
+            < 17 => (long)1e5,
+            < 20 => (long)1e6,
+            < 23 => (long)1e7,
+            < 26 => (int)1e8,
+            < 29 => (int)1e9,
+            < 32 => (long)1e10,
+            < 35 => (long)1e11,
+            < 38 => (long)1e12,
+            < 41 => (long)1e13,
+            < 44 => (long)1e14,
+            < 47 => (long)1e15,
+            _ => (long)1e16,
+        };
+
+        if(isBetUp)
+            BetUp(value);
+        if(isBetDown)
+            BetDown(value);
     }
     IEnumerator RollAnime(SlotSystem.ResultEnum mode)
     {
@@ -99,14 +145,14 @@ public class SlotAnimeSystem : MonoBehaviour
             _rollRectRight.anchoredPosition = new Vector2(250, right);
             yield return null;
 
-            if(stop is 0)
+            if (stop is 0)
             {
                 if (Time.time - startTime > 2)
                     stop = 1;
             }
             else if (stop is 6)
                 break;
-            else if (stop is 2||stop is 4)
+            else if (stop is 2 || stop is 4)
             {
                 if (Time.time - startTime > 1)
                     stop++;
@@ -123,11 +169,11 @@ public class SlotAnimeSystem : MonoBehaviour
     {
         CoinManager.Instance.SlotResult(_betValue);
     }
-    float CalcRoll(float current, SlotSystem.ResultEnum mode,ref int stop,int whenStop,int seed)
+    float CalcRoll(float current, SlotSystem.ResultEnum mode, ref int stop, int whenStop, int seed)
     {
         if (stop >= whenStop)
         {
-            if (Mathf.Abs(SlotImgPos(mode,seed) - current) < 100)
+            if (Mathf.Abs(SlotImgPos(mode, seed) - current) < 300)
             {
                 stop = stop == whenStop ? whenStop + 1 : stop;
                 return SlotImgPos(mode, seed);
@@ -140,7 +186,7 @@ public class SlotAnimeSystem : MonoBehaviour
             return current + 6000 * Time.deltaTime;
         }
     }
-    int SlotImgPos(SlotSystem.ResultEnum mode,int missValue)
+    int SlotImgPos(SlotSystem.ResultEnum mode, int missValue)
     {
         return mode switch
         {
@@ -158,21 +204,33 @@ public class SlotAnimeSystem : MonoBehaviour
     }
     void BetTextUpdate()
     {
-        _betText.text = $"BET: {_betValue}";
+        _betText.text = $"BET: {_betValue.ToString("#,0")}";
     }
-    void BetUp()
+    void BetUp(long bet)
     {
         if (_isNowRoll)
             return;
-        _betValue = Mathf.Clamp(_betValue + 1, 1, (int)CoinManager.Instance.coin.ToLong());
-        _betValue = _betValue <= 1 ? 1 : _betValue;
+        _betValue = BetClamp(_betValue + bet);
+        isBetUp = true;
+        isBetDown = false;
+        BetTextUpdate();
     }
-    void BetDown()
+    void BetUpped()
+    {
+        isBetUp = false;
+    }
+    void BetDown(long bet)
     {
         if (_isNowRoll)
             return;
-        _betValue = Mathf.Clamp(_betValue - 1, 1, (int)CoinManager.Instance.coin.ToLong());
-        _betValue = _betValue <= 1 ? 1 : _betValue;
+        _betValue = BetClamp(_betValue - bet);
+        isBetDown = true;
+        isBetUp = false;
+        BetTextUpdate();
+    }
+    void BetDowned()
+    {
+        isBetDown = false;
     }
     void CloseSlotPanel()
     {
@@ -181,4 +239,6 @@ public class SlotAnimeSystem : MonoBehaviour
         CoinManager.Instance._panelState = CoinManager.PanelState.InGame;
         CoinManager.Instance.PanelActive();
     }
+    long BetClamp(long bet)
+        => bet >= (long)1e17 ? (long)1e17 : bet <= 1 ? 1 : bet;
 }

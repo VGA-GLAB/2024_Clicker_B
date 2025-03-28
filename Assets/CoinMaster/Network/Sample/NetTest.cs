@@ -27,6 +27,26 @@ public class NetTest : MonoBehaviour
         Debug.Log(JsonUtility.ToJson(result));
     }
 
+    public async void save()
+    {
+        //保存テスト
+        var result = await CoinMasterNetwork.Save();
+        Debug.Log(JsonUtility.ToJson(result));
+    }
+
+    public async void list()
+    {
+        //攻撃対象のリストを取得する
+        var result = await CoinMasterNetwork.GetList();
+        Debug.Log(JsonUtility.ToJson(result));
+    }
+
+    public async void attack()
+    {
+        //攻撃
+        var result = await CoinMasterNetwork.Attack("acb83937-e330-4787-b064-2865ab98bb74", 100);
+        Debug.Log(JsonUtility.ToJson(result));
+    }
 
     // エディタ用
 #if UNITY_EDITOR
